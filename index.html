@@ -45,8 +45,7 @@
             color: var(--white);
             text-align: center;
             outline: none;
-            appearance: none;
-            -moz-appearance: textfield;
+            appearance: textfield;
         }
 
         input::-webkit-outer-spin-button,
@@ -83,7 +82,7 @@
 
     <h1>Consignaction ÉTS</h1>
     <label for="bac">Numéro de bac :</label>
-    <input type="text" id="bac" placeholder="00" maxlength="2">
+    <input type="number" id="bac" placeholder="00" min="0" max="99" inputmode="numeric">
     <button onclick="sendRequest()">Soumettre</button>
     <p class="error" id="error-message"></p>
 
