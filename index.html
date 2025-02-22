@@ -9,6 +9,7 @@
             --green: #50E59D;
             --dark: #303131;
             --white: #FFFFFF;
+            --error: #FF6B6B;
         }
 
         body {
@@ -69,26 +70,50 @@
         button:hover {
             background-color: #3ac78b;
         }
+
+        .error {
+            color: var(--error);
+            font-size: 1rem;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <h1>Consignaction ÉTS</h1>
     <label for="bac">Numéro de bac :</label>
-    <input type="number" id="bac" min="0" max="99" placeholder="00">
+    <input type="text" id="bac" placeholder="00" maxlength="2">
     <button onclick="sendRequest()">Soumettre</button>
+    <p class="error" id="error-message"></p>
 
     <script>
         function sendRequest() {
-            let bacNumber = document.getElementById("bac").value;
-            if (bacNumber === "") {
-                alert("Veuillez entrer un numéro de bac !");
+            let bacInput = document.getElementById("bac");
+            let bacNumber = bacInput.value.trim();
+            let errorMessage = document.getElementById("error-message");
+
+            // Reset error message
+            errorMessage.style.display = "none";
+            errorMessage.textContent = "";
+
+            // Validation
+            if (!/^\d+$/.test(bacNumber)) {
+                errorMessage.textContent = "Veuillez entrer un nombre valide.";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            let bacNum = parseInt(bacNumber, 10); // Converts "03" to 3
+            if (isNaN(bacNum) || bacNum < 0 || bacNum > 99) {
+                errorMessage.textContent = "Le numéro doit être entre 0 et 99.";
+                errorMessage.style.display = "block";
                 return;
             }
 
             let webhookURL = "https://discordapp.com/api/webhooks/1342904180410552320/zgHkPUqVpnmCqdmbuQly9eeah-osZAyb4B3XNvQ13Wmr0lA2lUXcXmOvO7kdfjNoJi9R";
             let payload = {
-                content: "Vider Bac " + bacNumber + "!"
+                content: "Vider Bac " + bacNum + "!"
             };
 
             fetch(webhookURL, {
@@ -99,6 +124,7 @@
             .then(response => {
                 if (response.ok) {
                     alert("Demande envoyée !");
+                    bacInput.value = "";
                 } else {
                     alert("Erreur d'envoi !");
                 }
